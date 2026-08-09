@@ -10,6 +10,7 @@ is the exact failure this project keeps running into. autopep8 fixes actual
 PEP 8 violations and leaves everything else alone.
 """
 
+import difflib
 import shutil
 import subprocess
 from pathlib import Path
@@ -52,10 +53,16 @@ def format_file_tool(filename: str, aggressive: str = "") -> Dict[str, Any]:
     if after == before:
         return {"file": str(p), "changed": 0, "note": "already conforms"}
 
-
+    # Diff the two versions rather than comparing line i to line i. Positional
+    # comparison is right only when nothing shifts: delete one blank line and
+    # every line after it lands at a new index, so all of them read as changed.
+    # Running this on its own source reported 12 changed lines for a one-line
+    # deletion. get_opcodes counts the edit, not the displacement.
     b, a_ = before.splitlines(), after.splitlines()
-    changed = sum(1 for i in range(max(len(b), len(a_)))
-                  if (b[i] if i < len(b) else None) != (a_[i] if i < len(a_) else None))
+    changed = sum(max(i2 - i1, j2 - j1)
+                  for tag, i1, i2, j1, j2
+                  in difflib.SequenceMatcher(None, b, a_).get_opcodes()
+                  if tag != "equal")
     return {"file": str(p), "changed": changed,
             "note": "style only — indentation and whitespace, no logic changes"}
 
