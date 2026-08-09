@@ -1,4 +1,4 @@
-# linuxrebel/format 1.0.0
+# linuxrebel/format 0.1.0
 
 autopep8 as a tool. Fixes PEP 8 style deterministically — no model, no tokens,
 and it cannot alter the code either side of the whitespace.
