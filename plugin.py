@@ -29,8 +29,8 @@ def _abs(filename: str) -> Path:
 
 
 def format_file_tool(filename: str, aggressive: str = "") -> Dict[str, Any]:
-    """Fix PEP 8 style in a Python file with autopep8. Returns lines changed.
-    Style only — indentation, whitespace, blank lines. Never changes logic."""
+    """Fix PEP 8 style with autopep8. Returns lines changed.
+    Whitespace and indentation only, never logic. aggressive: any value."""
     p = _abs(filename)
     if not p.is_file():
         return {"error": "file_not_found", "file_path": str(p)}
